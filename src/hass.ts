@@ -2,7 +2,7 @@ import * as ha from 'home-assistant-js-websocket';
 import ws from 'ws';
 import { Device, HaEntities } from './types.js';
 
-global.WebSocket = (ws as unknown) as typeof WebSocket;
+global.WebSocket = ws as unknown as typeof WebSocket;
 
 export let haConnection: ha.Connection | null = null;
 export const haStates: Record<string, Device['state']> = {};
@@ -42,7 +42,7 @@ export async function connectHomeAssistant(
     const auth = ha.createLongLivedTokenAuth(haUrl, haToken);
     haConnection = await ha.createConnection({ auth });
     log('Connected to Home Assistant');
-    
+
     devices
       .filter((d: Device) => typeof d.entity_id === 'string')
       .forEach((device: Device) => {

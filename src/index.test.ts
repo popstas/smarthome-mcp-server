@@ -4,19 +4,21 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { runCli } from './helpers.js';
 
 describe('MCP server tools', () => {
-  let client: Client;
   let transport: StdioClientTransport;
 
-  beforeAll(async () => {
-  });
+  beforeAll(async () => {});
 
   it('measure cold server start', async () => {
     const start = Date.now();
     const client = new Client({ name: 'test', version: '1.0.0' });
-    transport = new StdioClientTransport({ command: 'npm', args: ['run', 'dev'], env: {
-      ...process.env,
-      NODE_OPTIONS: `--unhandled-rejections=warn ${process.env.NODE_OPTIONS || ''}`.trim(),
-    }});
+    transport = new StdioClientTransport({
+      command: 'npm',
+      args: ['run', 'dev'],
+      env: {
+        ...process.env,
+        NODE_OPTIONS: `--unhandled-rejections=warn ${process.env.NODE_OPTIONS || ''}`.trim()
+      }
+    });
     await client.connect(transport);
     const end = Date.now();
     expect(end - start).toBeLessThan(5000);
@@ -33,13 +35,17 @@ describe('MCP server tools', () => {
   it('exposes all expected tools', async () => {
     // prepare client
     const client = new Client({ name: 'test', version: '1.0.0' });
-    transport = new StdioClientTransport({ command: 'npm', args: ['run', 'dev'], env: {
-      ...process.env,
-      NODE_OPTIONS: `--unhandled-rejections=warn ${process.env.NODE_OPTIONS || ''}`.trim(),
-    }});
+    transport = new StdioClientTransport({
+      command: 'npm',
+      args: ['run', 'dev'],
+      env: {
+        ...process.env,
+        NODE_OPTIONS: `--unhandled-rejections=warn ${process.env.NODE_OPTIONS || ''}`.trim()
+      }
+    });
     await client.connect(transport);
 
-    const {tools} = await client.listTools();
+    const { tools } = await client.listTools();
     const names = tools.map((t: { name: string }) => t.name);
     expect(names).toEqual(
       expect.arrayContaining([
@@ -52,4 +58,4 @@ describe('MCP server tools', () => {
       ])
     );
   });
-}); 
+});

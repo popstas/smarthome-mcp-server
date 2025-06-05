@@ -15,7 +15,7 @@ const mqttConfig = config.mqtt;
 const mqttUrl = `mqtt://${mqttConfig.host}:${mqttConfig.port}`;
 const mqttOptions: IClientOptions = {
   username: mqttConfig.user,
-  password: mqttConfig.password,
+  password: mqttConfig.password
 };
 // MQTT client
 export const client: MqttClient = mqtt.connect(mqttUrl, mqttOptions);
