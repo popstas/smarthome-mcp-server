@@ -17,7 +17,7 @@ export const config = yaml.load(fs.readFileSync(configPath, 'utf8')) as Config;
 const base = config.mqtt?.base || '';
 
 export function log(...args: unknown[]) {
-  const msg = args.map(a => (typeof a === 'string' ? a : JSON.stringify(a))).join(' ');
+  const msg = args.map((a) => (typeof a === 'string' ? a : JSON.stringify(a))).join(' ');
   try {
     if (client.connected && base) {
       client.publish(`${base}/log`, msg);
@@ -42,15 +42,12 @@ export function ensureDataDir(filePath: string): void {
  * Wrap a tool execution in a standardized try/catch.
  * Logs errors and returns an MCP-friendly error response.
  */
-export async function withToolErrorHandling<R>(
-  toolName: string,
-  fn: () => Promise<R>
-): Promise<R> {
+export async function withToolErrorHandling<R>(toolName: string, fn: () => Promise<R>): Promise<R> {
   try {
     return await fn();
   } catch (e) {
     log(`Tool "${toolName}" failed:`, e);
-    // @ts-ignore
+    // @ts-expect-error intentionally returning generic error structure
     return { content: [{ type: 'text', text: (e as Error).message }] };
   }
 }
@@ -69,13 +66,20 @@ export async function runCli(args: string[]) {
 }
 
 let clientTest: Client;
-export async function runCliTool(toolName: string, args: Record<string, unknown>): Promise<ToolResponse> {
+export async function runCliTool(
+  toolName: string,
+  args: Record<string, unknown>
+): Promise<ToolResponse> {
   if (!clientTest) {
     clientTest = new Client({ name: 'test', version: '1.0.0' });
-    const transport = new StdioClientTransport({ command: 'npm', args: ['run', 'dev'], env: {
-      ...process.env,
-      NODE_OPTIONS: `--unhandled-rejections=warn ${process.env.NODE_OPTIONS || ''}`.trim(),
-    }});
+    const transport = new StdioClientTransport({
+      command: 'npm',
+      args: ['run', 'dev'],
+      env: {
+        ...process.env,
+        NODE_OPTIONS: `--unhandled-rejections=warn ${process.env.NODE_OPTIONS || ''}`.trim()
+      }
+    });
     await clientTest.connect(transport);
   }
   const result = await clientTest.callTool({ name: toolName, arguments: args });
@@ -87,35 +91,36 @@ interface ToolResponse {
 }
 
 export async function runTool<T = unknown>(
-  toolName: string, 
+  toolName: string,
   params: Record<string, unknown>
 ): Promise<{ parsed: ToolResponse; valid: boolean; content: T }> {
-  
   // return runToolInspector(toolName, params);
   const parsed = await runCliTool(toolName, params);
   const valid = isValidToolResponse(parsed);
   const content = JSON.parse(parsed.content[0].text);
 
-  return {parsed, valid, content};
+  return { parsed, valid, content };
 }
 
 export async function runToolInspector<T = unknown>(
-  toolName: string, 
+  toolName: string,
   params: Record<string, unknown>
 ): Promise<{ parsed: ToolResponse; valid: boolean; content: T }> {
   const args = [
-    '--method', 'tools/call',
-    '--tool-name', toolName,
+    '--method',
+    'tools/call',
+    '--tool-name',
+    toolName,
     ...Object.entries(params).flatMap(([key, value]) => {
       const val = typeof value === 'string' ? value : JSON.stringify(value);
-      return ['--tool-arg', `${key}=${val}`]
-    }),
+      return ['--tool-arg', `${key}=${val}`];
+    })
   ];
   const parsed = await runCli(args);
   const valid = isValidToolResponse(parsed);
   const content = JSON.parse(parsed.content[0].text);
 
-  return {parsed, valid, content};
+  return { parsed, valid, content };
 }
 
 export function isValidToolResponse(parsed: unknown): parsed is ToolResponse {

@@ -37,9 +37,9 @@ home_assistant:
   host: YOUR_HASS_HOST
   token: YOUR_LONG_LIVED_ACCESS_TOKEN
 rules:
-  - text: "Your Automation Rule"
+  - text: 'Your Automation Rule'
 devices:
-  - name: "Light in Room"
+  - name: 'Light in Room'
     room: room
     entity_id: light.your_light_entity
     state_type: boolean
@@ -66,6 +66,7 @@ npm start
 ## Examples
 
 ### Sample `config.yml`
+
 ```yaml
 mqtt:
   host: localhost
@@ -77,9 +78,9 @@ home_assistant:
   host: localhost
   token: token
 rules:
-  - text: "When no one is home or sleeping, turn off all lights."
+  - text: When no one is home or sleeping, turn off all lights.
 devices:
-  - name: "Light in Room"
+  - name: Light in Room
     room: room
     entity_id: light.yeelight_ceiling20_0x2339ef2c
     state_type: boolean
@@ -88,6 +89,7 @@ devices:
 ### Using Tools via MCP
 
 #### Get all device states
+
 ```json
 {
   "tool": "get_smarthome_state",
@@ -96,6 +98,7 @@ devices:
 ```
 
 #### Change device state
+
 ```json
 {
   "tool": "change_smarthome_state",
@@ -107,6 +110,7 @@ devices:
 ```
 
 #### List automation rules
+
 ```json
 {
   "tool": "get_smarthome_rules",
@@ -115,6 +119,7 @@ devices:
 ```
 
 #### Add a new rule
+
 ```json
 {
   "tool": "add_smarthome_rule",
@@ -123,6 +128,7 @@ devices:
 ```
 
 #### Add a new device
+
 ```json
 {
   "tool": "add_smarthome_device",
