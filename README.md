@@ -78,9 +78,9 @@ home_assistant:
   host: localhost
   token: token
 rules:
-  - text: 'When no one is home or sleeping, turn off all lights.'
+  - text: When no one is home or sleeping, turn off all lights.
 devices:
-  - name: 'Light in Room'
+  - name: Light in Room
     room: room
     entity_id: light.yeelight_ceiling20_0x2339ef2c
     state_type: boolean
